@@ -131,16 +131,13 @@ void drawTextureTriangle(DrawingWindow &window, CanvasTriangle triangle, Texture
         auto x_right = top.x + coefficient_Right * (bottom.x - top.x);
 
 
-        //计算uv
+        //扫描线与屏幕三角形左右边界的交点在纹理图像中的对应位置
         auto u_left= top.texturePoint.x + coefficient_Left * (middle.texturePoint.x - top.texturePoint.x);
         auto v_left = top.texturePoint.y + coefficient_Left * (middle.texturePoint.y - top.texturePoint.y);
         auto u_right = top.texturePoint.x + coefficient_Right * (bottom.texturePoint.x - top.texturePoint.x);
         auto v_right = top.texturePoint.y + coefficient_Right * (bottom.texturePoint.y - top.texturePoint.y);
 
-        u_left /= texture.width;
-        v_left /= texture.height;
-        u_right /= texture.width;
-        v_right /= texture.height;
+
 
         if (x_left > x_right) {
             std::swap(x_left, x_right);
@@ -151,16 +148,13 @@ void drawTextureTriangle(DrawingWindow &window, CanvasTriangle triangle, Texture
         for(int j = round(x_left); j <= round(x_right); j++) {
             float t = (j - x_left) / (x_right - x_left);
 
-            //计算纹理内的相对坐标
-            auto u = u_left + t * (u_right - u_left);
-            auto v = v_left + t * (v_right - v_left);
-
             //计算纹理内的坐标
-            int textureX = int(u * texture.width);
-            int textureY = int(v * texture.height);
+            int u = u_left + t * (u_right - u_left);
+            int v = v_left + t * (v_right - v_left);
+
 
             //第 i 行第 j 列的像素会存储在 pixels 数组的索引为 i * width + j 处。
-            uint32_t pixelColour = texture.pixels[textureY * texture.width + textureX];
+            uint32_t pixelColour = texture.pixels[v * texture.width + u];
             window.setPixelColour(j,i,pixelColour);
 
 
@@ -181,10 +175,7 @@ void drawTextureTriangle(DrawingWindow &window, CanvasTriangle triangle, Texture
         auto u_right = top.texturePoint.x + coefficient_Right * (bottom.texturePoint.x - top.texturePoint.x);
         auto v_right = top.texturePoint.y + coefficient_Right * (bottom.texturePoint.y - top.texturePoint.y);
 
-        u_left /= texture.width;
-        v_left /= texture.height;
-        u_right /= texture.width;
-        v_right /= texture.height;
+
         if (x_left > x_right) {
             std::swap(x_left, x_right);
             std::swap(u_left, u_right);
@@ -194,23 +185,17 @@ void drawTextureTriangle(DrawingWindow &window, CanvasTriangle triangle, Texture
         for(int j = round(x_left); j <= round(x_right); j++) {
             float t = (j - x_left) / (x_right - x_left);
 
-            //计算纹理内的相对坐标
-            auto u = u_left + t * (u_right - u_left);
-            auto v = v_left + t * (v_right - v_left);
-
             //计算纹理内的坐标
-            int textureX = int(u * texture.width);
-            int textureY = int(v * texture.height);
+            int u = u_left + t * (u_right - u_left);
+            int v = v_left + t * (v_right - v_left);
+
 
             //第 i 行第 j 列的像素会存储在 pixels 数组的索引为 i * width + j 处。
-            uint32_t pixelColour = texture.pixels[textureY * texture.width + textureX];
+            uint32_t pixelColour = texture.pixels[v * texture.width + u];
             window.setPixelColour(j,i,pixelColour);
         }
 
     }
-
-
-
 }
 
 void draw(DrawingWindow &window) {
