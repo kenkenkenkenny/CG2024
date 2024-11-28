@@ -10,6 +10,7 @@
 #include <TextureMap.h>
 #include <map>
 #include <RayTriangleIntersection.h>
+#include <algorithm>
 
 
 
@@ -967,6 +968,34 @@ glm::vec3 getCanvasWeight(int x, int y,CanvasTriangle triangle) {
 
 }
 
+int getminInt(int x1, int x2, int x3) {
+    if (x1 < x2) {
+        if(x1 < x3) {
+            return x1;
+        }
+    }else {
+        if(x2 < x3) {
+            return x2;
+        }
+    }
+    return x3;
+
+}
+
+int getmaxInt(int x1, int x2, int x3) {
+    if (x1 > x2) {
+        if(x1 > x3) {
+            return x1;
+        }
+    }else {
+        if(x2 > x3) {
+            return x2;
+        }
+    }
+    return x3;
+
+}
+
 void goodTureture(DrawingWindow &window,CanvasTriangle triangle, TextureMap texture, float depth_buff[WIDTH][HEIGHT]) {
     if (triangle[0].y > triangle[1].y) std::swap(triangle[0], triangle[1]);
     if (triangle[0].y > triangle[2].y) std::swap(triangle[0], triangle[2]);
@@ -974,8 +1003,8 @@ void goodTureture(DrawingWindow &window,CanvasTriangle triangle, TextureMap text
     CanvasPoint v0 = triangle[0];
     CanvasPoint v1 = triangle[1];
     CanvasPoint v2 = triangle[2];
-    int left_x = min({v0.x, v1.x, v2.x});
-    int right_x = max({v0.x, v1.x, v2.x});
+    int left_x = getminInt(v0.x, v1.x, v2.x);
+    int right_x = getmaxInt(v0.x, v1.x, v2.x);
 
     for (int x = left_x; x <= right_x; x++) {
         for (int y = v0.y; y <= v2.y; y++) {
@@ -1460,12 +1489,12 @@ int main(int argc, char *argv[]) {
         // phongShading(window, sphere,Spherlight);
 
 
-        // drawRasterisedSceneWithTexture(window, Tcornbox);
+        drawRasterisedSceneWithTexture(window, Tcornbox);
         // drawRayTracedSceneWithSoftShadow(window,cornbox,box_light);
 
 
         // drawRayTracedSceneWithSoftShadowandMirror(window,Mirrorcornbox,box_light,6);
-        drawRayTracedSceneWithSoftShadowAndGlass(window, Mirrorcornbox, box_light, 6);
+        // drawRayTracedSceneWithSoftShadowAndGlass(window, Mirrorcornbox, box_light, 6);
 
 
         window.savePPM("output.ppm");
